@@ -1,6 +1,7 @@
 #include "main.h"
 #include "autons.hpp"
 #include "pros/abstract_motor.hpp"
+#include "pros/misc.h"
 #include "pros/motor_group.hpp"
 #include "pros/motors.h"
 #include "pros/motors.hpp"
@@ -165,7 +166,9 @@ void initialize() {
   // Autonomous Selector using LLEMU
   ez::as::auton_selector.autons_add({
      {"test diddy",four_3_left},
-     {"seven push right",seven_right}
+     {"seven push right",seven_right},
+     {"sig sawp",sig_sawp}
+     
   });
 
   // Initialize chassis and auton selector
@@ -348,10 +351,14 @@ void opcontrol() {
         scraper_piston.toggle();
         pros::delay(200);
     }
-    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B))
-    {
-        hook_piston.toggle();
+
+    if(master.get_digital(pros::E_CONTROLLER_DIGITAL_B)){
+        hook_piston.retract();
     }
+    else{
+        hook_piston.extend();
+    }
+
     if(master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)){
         score();
     }

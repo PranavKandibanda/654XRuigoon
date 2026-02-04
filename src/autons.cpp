@@ -26,7 +26,7 @@ void default_constants() {
   chassis.pid_odom_boomerang_constants_set(5.8, 0.0, 32.5);  // Angular control for boomerang motions
 
   // Exit conditions
-  chassis.pid_turn_exit_condition_set(100_ms, 1_deg, 500_ms, 3_deg, 500_ms, 500_ms);
+  chassis.pid_turn_exit_condition_set(100_ms, 4_deg, 500_ms, 6_deg, 500_ms, 500_ms);
   chassis.pid_swing_exit_condition_set(90_ms, 3_deg, 250_ms, 7_deg, 500_ms, 500_ms);
   chassis.pid_drive_exit_condition_set(100_ms, 4_in, 300_ms, 6_in, 500_ms, 500_ms);
   chassis.pid_odom_turn_exit_condition_set(90_ms, 3_deg, 250_ms, 7_deg, 500_ms, 750_ms);
@@ -54,7 +54,7 @@ void default_constants() {
 void four_3_left()
 {
   chassis.odom_xyt_set(0_in, 24_in, 180_deg);
-  chassis.pid_drive_set(24_in, DRIVE_SPEED, true);
+  chassis.pid_drive_set(30_in, DRIVE_SPEED, true);
   chassis.pid_wait();
   scraper_piston.set_value(true);
   chassis.pid_turn_set(90_deg, TURN_SPEED);
@@ -84,7 +84,7 @@ void four_3_left()
 
   chassis.pid_turn_set(145_deg, TURN_SPEED);
   chassis.pid_wait();
-  chassis.pid_drive_set(-26_in, DRIVE_SPEED, true);
+  chassis.pid_drive_set(-27.5_in, DRIVE_SPEED, true);
   chassis.pid_wait();
   middle();
   pros::Task::delay(750);
@@ -101,10 +101,12 @@ void four_3_left()
   chassis.pid_wait();
 }
 
+
+
 void seven_right()
 {
   chassis.odom_xyt_set(0_in, 24_in, 0_deg);
-  chassis.pid_drive_set(24_in, DRIVE_SPEED, true);
+  chassis.pid_drive_set(22_in, DRIVE_SPEED, true);
   chassis.pid_wait();
   scraper_piston.set_value(true);
   chassis.pid_turn_set(90_deg, TURN_SPEED);
@@ -113,10 +115,11 @@ void seven_right()
 
   chassis.pid_drive_set(13_in, DRIVE_SPEED, true);
   chassis.pid_wait();
-  pros::Task::delay(100);
+  pros::Task::delay(130);
 
   chassis.pid_drive_set(-31_in, DRIVE_SPEED, true);
   chassis.pid_wait();
+  pros::Task::delay(100);
   score();
   pros::Task::delay(800);
   intake.move(0);
@@ -125,28 +128,118 @@ void seven_right()
   chassis.pid_drive_set(22_in, DRIVE_SPEED, true);
   chassis.pid_wait();
 
-  chassis.pid_turn_set(218_deg, TURN_SPEED);
+  chassis.pid_turn_set(228_deg, TURN_SPEED);
   chassis.pid_wait();
   load();
 
-  chassis.pid_drive_set(30_in, DRIVE_SPEED, true);
+  chassis.pid_drive_set(34_in, DRIVE_SPEED, true);
   chassis.pid_wait();
 
-  chassis.pid_turn_set(235_deg, TURN_SPEED);
+  chassis.pid_drive_set(-32_in, DRIVE_SPEED, true);
   chassis.pid_wait();
-  chassis.pid_drive_set(-26_in, DRIVE_SPEED, true);
+
+  chassis.pid_turn_set(90_deg, TURN_SPEED);
   chassis.pid_wait();
-  middle();
-  pros::Task::delay(750);
+
+  chassis.pid_drive_set(-22_in, DRIVE_SPEED, true);
+  chassis.pid_wait();
+  
+  score();
+  pros::Task::delay(800);
   intake.move(0);
 
-  chassis.pid_drive_set(33.65_in, DRIVE_SPEED, true);
+  hook_piston.set_value(false);
+  chassis.pid_drive_set(8_in, DRIVE_SPEED, true);
   chassis.pid_wait();
 
-  chassis.pid_turn_set(270_deg, TURN_SPEED);
+  chassis.pid_turn_set(45_deg, TURN_SPEED);
   chassis.pid_wait();
 
-  hook_piston.set_value(true);
+  chassis.pid_drive_set(-18_in, DRIVE_SPEED, true);
+  hook_piston.set_value(false);
+  chassis.pid_wait();
+
+  chassis.pid_turn_set(90_deg, TURN_SPEED);
+  chassis.pid_wait();
+
+  chassis.pid_drive_set(-10_in, DRIVE_SPEED, true);
+  chassis.pid_wait();
+}
+
+void sig_sawp()
+{
+  chassis.odom_xyt_set(23_in, 0_in, 180_deg);
+  load();
+  chassis.pid_drive_set(8_in, DRIVE_SPEED, false); //push bot
+  chassis.pid_wait();
+
+  chassis.pid_drive_set(-50_in, DRIVE_SPEED, false); //go to loader
+  chassis.pid_wait();
+
+  scraper_piston.set_value(true);
+  chassis.pid_turn_set(90_deg, TURN_SPEED);
+  chassis.pid_wait();
+  load();
+
+  chassis.pid_drive_set(13_in, DRIVE_SPEED, true);
+  chassis.pid_wait();
+  pros::Task::delay(150);
+
+  chassis.pid_drive_set(-31_in, DRIVE_SPEED, true);
+  chassis.pid_wait();
+  pros::Task::delay(100);
+  score();
+  pros::Task::delay(850);
+  intake.move(0);
+  scraper_piston.set_value(false);
+
   chassis.pid_drive_set(22_in, DRIVE_SPEED, true);
+  chassis.pid_turn_set(185_deg, TURN_SPEED);//center 3
   chassis.pid_wait();
+
+  load();
+  chassis.pid_drive_set(20_in, DRIVE_SPEED, true); //center 3 get
+  chassis.pid_wait();
+
+  chassis.pid_turn_set(180_deg, TURN_SPEED);
+  chassis.pid_wait();
+
+  chassis.pid_drive_set(47_in, 80, true); //going to other center 3
+  chassis.pid_wait();
+
+  chassis.pid_turn_set(140_deg, TURN_SPEED);
+  chassis.pid_wait_quick_chain();
+
+  chassis.pid_drive_set(-26_in,DRIVE_SPEED,true);
+  chassis.pid_wait();
+
+  middle();
+  pros::Task::delay(800);
+
+  //this is the second loader starting
+  load();
+  chassis.pid_drive_set(48_in, DRIVE_SPEED, true); //back to starting zone
+  chassis.pid_wait();
+
+  chassis.pid_turn_set(90_deg, TURN_SPEED);
+  scraper_piston.set_value(true);
+  chassis.pid_wait();
+
+  chassis.pid_drive_set(16_in, DRIVE_SPEED, true); //park
+  chassis.pid_wait();
+
+  chassis.pid_drive_set(-31_in, DRIVE_SPEED, true);
+  chassis.pid_wait();
+  score();
+  pros::Task::delay(800);
+
+
+
+
+
+
+
+
+
+
 }
