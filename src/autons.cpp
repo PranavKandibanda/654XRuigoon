@@ -101,68 +101,60 @@ void four_3_left()
   chassis.pid_wait();
 }
 
-
-
 void seven_right()
 {
-  chassis.odom_xyt_set(0_in, 24_in, 0_deg);
-  chassis.pid_drive_set(22_in, DRIVE_SPEED, true);
+  chassis.odom_xyt_set(7.25_in, 48_in, 270_deg);
+  chassis.pid_drive_set(10_in, DRIVE_SPEED, true);
   chassis.pid_wait();
-  scraper_piston.set_value(true);
-  chassis.pid_turn_set(90_deg, TURN_SPEED);
+
+  chassis.pid_turn_set(317_deg, TURN_SPEED);
   chassis.pid_wait();
   load();
 
-  chassis.pid_drive_set(13_in, DRIVE_SPEED, true);
-  chassis.pid_wait();
-  pros::Task::delay(130);
-
-  chassis.pid_drive_set(-31_in, DRIVE_SPEED, true);
+  chassis.pid_drive_set(21_in, DRIVE_SPEED, true);
   chassis.pid_wait();
   pros::Task::delay(100);
+
+  chassis.pid_turn_set(27_deg, TURN_SPEED); //tune angle
+  chassis.pid_wait();
+  intake.move(0);
+
+  chassis.pid_drive_set(27_in, DRIVE_SPEED, true);
+  chassis.pid_wait();
+
+  chassis.pid_turn_set(90_deg, TURN_SPEED);
+  chassis.pid_wait();
+
+  hook_piston.set_value(true);
+  hook_piston.set_value(false);
+
+  load();
+  scraper_piston.set_value(true);
+  chassis.pid_drive_set(22.5_in, DRIVE_SPEED, true);
+  chassis.pid_wait();
+  pros::Task::delay(150);
+  intake.move(0);
+
+  chassis.pid_drive_set(-22.5_in, DRIVE_SPEED, true);
+  chassis.pid_wait();
+
   score();
   pros::Task::delay(800);
-  intake.move(0);
-  scraper_piston.set_value(false);
+
+  //all this is the hook
+  chassis.pid_drive_set(33.65_in, DRIVE_SPEED, true);
+  chassis.pid_wait();
+
+  chassis.pid_turn_set(225_deg, TURN_SPEED);
+  chassis.pid_wait();
 
   chassis.pid_drive_set(22_in, DRIVE_SPEED, true);
   chassis.pid_wait();
 
-  chassis.pid_turn_set(228_deg, TURN_SPEED);
-  chassis.pid_wait();
-  load();
-
-  chassis.pid_drive_set(34_in, DRIVE_SPEED, true);
+  chassis.pid_turn_set(270_deg, TURN_SPEED);
   chassis.pid_wait();
 
-  chassis.pid_drive_set(-32_in, DRIVE_SPEED, true);
-  chassis.pid_wait();
-
-  chassis.pid_turn_set(90_deg, TURN_SPEED);
-  chassis.pid_wait();
-
-  chassis.pid_drive_set(-22_in, DRIVE_SPEED, true);
-  chassis.pid_wait();
-  
-  score();
-  pros::Task::delay(800);
-  intake.move(0);
-
-  hook_piston.set_value(false);
-  chassis.pid_drive_set(8_in, DRIVE_SPEED, true);
-  chassis.pid_wait();
-
-  chassis.pid_turn_set(45_deg, TURN_SPEED);
-  chassis.pid_wait();
-
-  chassis.pid_drive_set(-18_in, DRIVE_SPEED, true);
-  hook_piston.set_value(false);
-  chassis.pid_wait();
-
-  chassis.pid_turn_set(90_deg, TURN_SPEED);
-  chassis.pid_wait();
-
-  chassis.pid_drive_set(-10_in, DRIVE_SPEED, true);
+  chassis.pid_drive_set(22_in, DRIVE_SPEED, false);
   chassis.pid_wait();
 }
 
@@ -242,4 +234,104 @@ void sig_sawp()
 
 
 
+}
+
+void four_push_right()
+{
+  chassis.odom_xyt_set(7.25_in, 48_in, 270_deg);
+  chassis.pid_drive_set(10_in, DRIVE_SPEED, true);
+  chassis.pid_wait();
+
+  chassis.pid_turn_set(317_deg, TURN_SPEED);
+  chassis.pid_wait();
+  load();
+
+  chassis.pid_drive_set(21_in, DRIVE_SPEED, true);
+  chassis.pid_wait();
+  pros::Task::delay(100);
+
+  chassis.pid_turn_set(27_deg, TURN_SPEED); //tune angle
+  chassis.pid_wait();
+  intake.move(0);
+
+  chassis.pid_drive_set(27_in, DRIVE_SPEED, true);
+  chassis.pid_wait();
+
+  chassis.pid_turn_set(90_deg, TURN_SPEED);
+  chassis.pid_wait();
+
+  chassis.pid_drive_set(-3.5_in, DRIVE_SPEED, true); // going into the long goal
+  chassis.pid_wait();
+
+  score();
+  pros::Task::delay(800);
+  intake.move(0);
+  hook_piston.set_value(true);
+  hook_piston.set_value(false);
+
+  //all this is the hook
+  chassis.pid_drive_set(33.65_in, DRIVE_SPEED, true);
+  chassis.pid_wait();
+
+  chassis.pid_turn_set(225_deg, TURN_SPEED);
+  chassis.pid_wait();
+
+  chassis.pid_drive_set(22_in, DRIVE_SPEED, true);
+  chassis.pid_wait();
+
+  chassis.pid_turn_set(270_deg, TURN_SPEED);
+  chassis.pid_wait();
+
+  chassis.pid_drive_set(22_in, DRIVE_SPEED, false);
+  chassis.pid_wait();
+}
+
+void four_push_left()
+{
+  chassis.odom_xyt_set(-7.25_in, 48_in, 270_deg);
+  chassis.pid_drive_set(10_in, DRIVE_SPEED, true);
+  chassis.pid_wait();
+
+  chassis.pid_turn_set(317_deg, TURN_SPEED);
+  chassis.pid_wait();
+  load();
+
+  chassis.pid_drive_set(21_in, DRIVE_SPEED, true);
+  chassis.pid_wait();
+  pros::Task::delay(100);
+
+  chassis.pid_turn_set(27_deg, TURN_SPEED); //tune angle
+  chassis.pid_wait();
+  intake.move(0);
+
+  chassis.pid_drive_set(27_in, DRIVE_SPEED, true);
+  chassis.pid_wait();
+
+  chassis.pid_turn_set(90_deg, TURN_SPEED);
+  chassis.pid_wait();
+
+  chassis.pid_drive_set(-3.5_in, DRIVE_SPEED, true); // going into the long goal
+  chassis.pid_wait();
+
+  score();
+  pros::Task::delay(800);
+  intake.move(0);
+  hook_piston.set_value(true);
+  hook_piston.set_value(false);
+
+  //all this is the hook
+  chassis.pid_drive_set(33.65_in, DRIVE_SPEED, true);
+  chassis.pid_wait();
+
+  chassis.pid_turn_set(225_deg, TURN_SPEED);
+  chassis.pid_wait();
+
+  chassis.pid_drive_set(22_in, DRIVE_SPEED, true);
+  chassis.pid_wait();
+
+  chassis.pid_turn_set(270_deg, TURN_SPEED);
+  chassis.pid_wait();
+
+  chassis.pid_drive_set(22_in, DRIVE_SPEED, false);
+  chassis.pid_wait();
 }
