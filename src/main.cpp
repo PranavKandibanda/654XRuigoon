@@ -61,6 +61,13 @@ void middle()
     intake.move(127);
 }
 
+void middle_skills()
+{
+    scoring_piston.set_value(false);//false
+    loading_piston.set_value(true);//true
+    intake.move(80);
+}
+
 void score_setup()
 {
   scoring_piston.set_value(true);
@@ -165,7 +172,8 @@ void initialize() {
 
   // Autonomous Selector using LLEMU
   ez::as::auton_selector.autons_add({
-    {"Sig Sawp",sig_sawp},
+    {"seven left",seven_left},
+     {"Sig Sawp",sig_sawp},
      {"Four + Three left push",four_3_left},
      {"Seven push right",seven_right},
      {"Four push right",four_push_right},
@@ -373,6 +381,10 @@ void opcontrol() {
     else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2))
     {
         middle();
+    }
+    else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_Y))
+    {
+        middle_skills();
     }
     else {
         intake.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
