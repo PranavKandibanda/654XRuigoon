@@ -172,12 +172,14 @@ void initialize() {
 
   // Autonomous Selector using LLEMU
   ez::as::auton_selector.autons_add({
-    {"seven left",seven_left},
-     {"Sig Sawp",sig_sawp},
-     {"Four + Three left push",four_3_left},
-     {"Seven push right",seven_right},
-     {"Four push right",four_push_right},
-     {"Four push left",four_push_left}
+    //{"skills",skills},
+    //{"four + three left",four_3_left},
+    //{"seven left",seven_left},
+     {"Sig Sawp",sig_sawp}
+     //{"Four + Three left push",four_3_left},
+     //{"Seven push right",seven_right},
+     //{"Four push right",four_push_right},
+     //{"Four push left",four_push_left}
   });
 
   // Initialize chassis and auton selector

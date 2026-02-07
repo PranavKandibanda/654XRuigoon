@@ -9,3 +9,4 @@ void sig_sawp();
 void four_push_right();
 void four_push_left();
 void seven_left();
+void skills();
