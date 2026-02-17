@@ -15,6 +15,7 @@ extern void outtake();
 extern void score();
 extern void load();
 extern void middle();
+extern void middle_skills();
 extern void score_setup();
 // Your motors, sensors, etc. should go here.  Below are examples
 

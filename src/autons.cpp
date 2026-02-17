@@ -435,19 +435,141 @@ void skills()
 {
   load();
   hook_piston.set_value(false);
-  chassis.odom_xyt_set(47_in, 0_in, 180_deg);
-  chassis.pid_drive_set(46_in, DRIVE_SPEED, false);
+  chassis.odom_xyt_set(47_in, 90_in, 270_deg);
+  chassis.pid_drive_set(-12_in, DRIVE_SPEED, false);
+  chassis.pid_wait();
+  chassis.pid_drive_set(33_in,70,false);
   chassis.pid_wait();
 
+  chassis.pid_drive_set(8_in,127,false,false);
+  chassis.pid_wait();
+
+  chassis.pid_turn_set(270_deg,TURN_SPEED);
+  chassis.pid_wait();
+
+  chassis.pid_drive_set(-26_in,DRIVE_SPEED);
+  chassis.pid_wait();
+  chassis.pid_drive_set(10_in,30);
+  chassis.pid_wait();
+
+  //start middle goal
+  chassis.odom_theta_set(270_deg);
+  intake.move(0);
+
+  chassis.pid_drive_set(-20_in,DRIVE_SPEED,false);
+  chassis.pid_wait();
+
+  chassis.pid_turn_set(225_deg,TURN_SPEED);
+  chassis.pid_wait();
+  
+  chassis.pid_drive_set(-20_in,DRIVE_SPEED,false);
+  chassis.pid_wait();
+
+  chassis.pid_turn_set(315_deg,TURN_SPEED);
+  chassis.pid_wait();
+
+  load();
+  chassis.pid_drive_set(6_in,DRIVE_SPEED,false);
+  chassis.pid_wait();
+  intake.move(0);
+
+  chassis.pid_drive_set(-8_in,DRIVE_SPEED,false);
+  chassis.pid_wait();
+  middle_skills();
+  pros::delay(2000);
+  intake.move(0);
+
+  chassis.pid_drive_set(48_in,DRIVE_SPEED,false);
+  chassis.pid_wait();
+
+  //first long goal
   scraper_piston.set_value(true);
-  chassis.pid_turn_set(90_deg, TURN_SPEED);
+  load();
+  chassis.pid_turn_set(270_deg, TURN_SPEED);
   chassis.pid_wait();
 
   chassis.pid_drive_set(14_in, DRIVE_SPEED, true);
   chassis.pid_wait();
-  pros::Task::delay(1000);
+  pros::delay(1000);
 
   chassis.pid_drive_set(-18_in, DRIVE_SPEED, true);
+  chassis.pid_wait();
+  score();
+  pros::delay(850);
+  intake.move(0);
+  scraper_piston.set_value(false);
+
+  chassis.pid_drive_set(6_in, DRIVE_SPEED, true);
+  chassis.pid_wait();
+
+  chassis.pid_turn_set(225_deg, TURN_SPEED);
+  chassis.pid_wait();
+
+  chassis.pid_drive_set(-17_in, DRIVE_SPEED, true);
+  chassis.pid_wait();
+
+  chassis.pid_turn_set(270_deg, TURN_SPEED);
+  chassis.pid_wait();
+  scraper_piston.set_value(false);
+
+  chassis.pid_drive_set(-55_in, DRIVE_SPEED, true);
+  chassis.pid_wait();
+
+  chassis.pid_turn_set(315_deg, TURN_SPEED);
+  chassis.pid_wait();
+
+  chassis.pid_drive_set(-16_in, DRIVE_SPEED, true);
+  chassis.pid_wait();
+
+  chassis.pid_turn_set(90_deg, TURN_SPEED);
+  chassis.pid_wait();
+
+  chassis.pid_drive_set(-18_in, DRIVE_SPEED, true);
+  chassis.pid_wait();
+
+  score();
+  pros::Task::delay(2000);
+  intake.move(0);
+
+  scraper_piston.set_value(true);
+  load();
+  chassis.pid_drive_set(29_in, DRIVE_SPEED, true);
+  chassis.pid_wait();
+  pros::Task::delay(1000);
+
+  chassis.pid_drive_set(-28_in, DRIVE_SPEED, true);
+  chassis.pid_wait();
+
+  score();
+  pros::Task::delay(2000);
+  intake.move(0);
+
+  //ends here for first long goal
+
+  //second long goal
+  chassis.pid_drive_set(12_in,DRIVE_SPEED, true);
+  chassis.pid_wait();
+
+  chassis.pid_turn_set(180_deg, TURN_SPEED);
+  chassis.pid_wait();
+
+  chassis.pid_drive_set(90_in, DRIVE_SPEED, true);
+  chassis.pid_wait();
+
+  scraper_piston.set_value(true);
+  load();
+  chassis.pid_turn_set(90_deg, TURN_SPEED);
+  chassis.pid_wait();
+
+  chassis.pid_drive_set(16_in, DRIVE_SPEED, true);
+  chassis.pid_wait();
+  pros::delay(1000);
+
+  chassis.pid_drive_set(-18_in, DRIVE_SPEED, true);
+  chassis.pid_wait();
+  scraper_piston.set_value(false);
+
+  chassis.pid_drive_set(6_in, DRIVE_SPEED, true);
   chassis.pid_wait();
 
   chassis.pid_turn_set(45_deg, TURN_SPEED);
@@ -460,7 +582,7 @@ void skills()
   chassis.pid_wait();
   scraper_piston.set_value(false);
 
-  chassis.pid_drive_set(-55_in, DRIVE_SPEED, true);
+  chassis.pid_drive_set(-60_in, DRIVE_SPEED, true);
   chassis.pid_wait();
 
   chassis.pid_turn_set(135_deg, TURN_SPEED);
@@ -481,16 +603,35 @@ void skills()
 
   scraper_piston.set_value(true);
   load();
-  chassis.pid_drive_set(28_in, DRIVE_SPEED, true);
+  chassis.pid_drive_set(34_in, DRIVE_SPEED, true);
   chassis.pid_wait();
   pros::Task::delay(1000);
 
-  chassis.pid_drive_set(-28_in, DRIVE_SPEED, true);
+  chassis.pid_drive_set(-34_in, DRIVE_SPEED, true);
   chassis.pid_wait();
 
   score();
   pros::Task::delay(2000);
   intake.move(0);
+  //ends here for second long goal
+  
+  //code for the park
+  scraper_piston.set_value(false);
+  chassis.pid_drive_set(12_in,DRIVE_SPEED,true);
+  chassis.pid_wait();
+
+  chassis.pid_turn_set(0_deg,TURN_SPEED);
+  chassis.pid_wait();
+
+  chassis.pid_drive_set(42_in,DRIVE_SPEED,true);
+  chassis.pid_wait();
+  
+  chassis.pid_turn_set(270_deg,TURN_SPEED);
+  chassis.pid_wait();
+
+  chassis.pid_drive_set(33_in,70,false);
+  chassis.pid_wait();
+
 
 
 }

@@ -172,8 +172,8 @@ void initialize() {
 
   // Autonomous Selector using LLEMU
   ez::as::auton_selector.autons_add({
-    //{"skills",skills},
-    //{"four + three left",four_3_left},
+    {"skills",skills},
+    {"four + three left",four_3_left},
     {"seven left",seven_left},
     {"Sig Sawp",sig_sawp},
      {"Seven push right",seven_right},
