@@ -59,7 +59,7 @@ void reverse()
 // Inertial Sensor on port 10
 pros::Imu imu(12);
 
-double front_sensor_offset = 8.5;
+double front_sensor_offset = 8;
 double left_sensor_offset = 5.5;
 double right_sensor_offset = 5.5;
 double back_sensor_offset = 6;
@@ -314,17 +314,19 @@ void autonomous() {
     pros::delay(500);
     //scoring middle
 
-    //going to loader
+    //going to long and scoring excess
     chassis.moveToPoint(-48, 48, 1000,{.maxSpeed = 97}, false);
     chassis.turnToHeading(266, 1000,{}, false);
     resetPositionRight();
     resetPositionFront();
     load();
-
-    chassis.moveToPoint(-35,48,500,{.forwards=false},false);
+    
+    chassis.moveToPoint(-30,48,500,{.forwards=false},false);
     score();
     pros::delay(500);
+    //going to long and scoring excess
 
+    //going to loader
     scraper_piston.set_value(true);
     chassis.moveToPoint(-58.5, chassis.getPose().y, 2000,{},false);
     pros::delay(500);
@@ -338,7 +340,7 @@ void autonomous() {
     //exiting loader
 
     //going to the side of first long goal
-    chassis.moveToPose(-36, 58,46+180,2000,{.forwards=false},false);
+    chassis.moveToPose(-36, 58.5,46+180,2000,{.forwards=false},false);
     chassis.turnToHeading(270, 1000,{},false);
     scraper_piston.set_value(false);
     resetPositionRight();
@@ -352,12 +354,12 @@ void autonomous() {
     //traversing the side of the first long goal
 
     //aligning with the end of the first long goal
-    chassis.moveToPose(36, 48, 311, 2000,{.forwards=false},false);
+    chassis.moveToPose(36, 48, 311, 2000,{.forwards=false,.lead = .4,.maxSpeed = 87},false);
     chassis.turnToHeading(90, 2000,{},false);
     //aligning with the end of the first long goal
 
     //going to score on the first long goal
-    chassis.moveToPoint(chassis.getPose().x-9, chassis.getPose().y, 1000,{.forwards = false},false);
+    chassis.moveToPoint(29.5,48, 1000,{.forwards = false},false);
     score();
     pros::delay(1000);
     resetPositionFront();
@@ -366,17 +368,36 @@ void autonomous() {
 
     //going to second loader
     scraper_piston.set_value(true);
-    chassis.moveToPoint(58.5, chassis.getPose().y, 2000,{},false);
+    chassis.moveToPoint(58.5, 48, 2000,{.maxSpeed = 67},false);
     pros::delay(500);
+    resetPositionLeft();
+    resetPositionFront();
     //going to second loader
 
     //scoring all of those blocks
-    chassis.moveToPoint(35, 48, 2000,{.forwards= false},false);
+    chassis.moveToPoint(29.5, 48, 2000,{.forwards= false},false);
     score();
     pros::delay(1000);
     resetPositionFront();
     resetPositionLeft();
+    scraper_piston.set_value(false);
     //scoring all of those blocks
+
+    //clearing park zone
+    chassis.moveToPose(40,36,180,2000,{},false);
+    resetPositionBack();
+    resetPositionLeft();
+
+    chassis.moveToPoint(40, 0,1000,{},false);
+    chassis.turnToHeading(90,1000,{},false);
+    resetPositionFront();
+    chassis.moveToPoint(46, 0, 1000,{},false);
+
+    chassis.tank(100,100);
+    pros::delay(1000);
+    chassis.cancelAllMotions();
+    //clearing park zone
+    
 
 }
 
