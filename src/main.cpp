@@ -23,6 +23,7 @@ pros::MotorGroup rightMotors({7, 9, 8}, pros::MotorGearset::blue); // right moto
 pros::adi::Pneumatics loading_piston('A',false);
 pros::adi::Pneumatics scoring_piston('B',false);
 pros::adi::Pneumatics scraper_piston('D',false);
+pros::adi::Pneumatics hook_piston('E',false);
 
 pros::MotorGroup intake ({1,-5}, pros::MotorGearset::blue);
 
@@ -326,11 +327,11 @@ void autonomous() {
     pros::delay(500);
     //going to long and scoring excess
 
-    //going to loader
+    //going to 2nd loader
     scraper_piston.set_value(true);
-    chassis.moveToPoint(-58.5, chassis.getPose().y, 2000,{},false);
+    chassis.moveToPoint(-58.5, chassis.getPose().y, 2000,{.maxSpeed = 87},false);
     pros::delay(500);
-    //going to loader
+    //going to 2nd loader
 
 
     //exiting loader
@@ -359,7 +360,7 @@ void autonomous() {
     //aligning with the end of the first long goal
 
     //going to score on the first long goal
-    chassis.moveToPoint(29.5,48, 1000,{.forwards = false},false);
+    chassis.moveToPoint(27.5,48, 1000,{.forwards = false},false);
     score();
     pros::delay(1000);
     resetPositionFront();
@@ -375,7 +376,7 @@ void autonomous() {
     //going to second loader
 
     //scoring all of those blocks
-    chassis.moveToPoint(29.5, 48, 2000,{.forwards= false},false);
+    chassis.moveToPoint(30.5, 48, 2000,{.forwards= false},false);
     score();
     pros::delay(1000);
     resetPositionFront();
@@ -383,24 +384,188 @@ void autonomous() {
     scraper_piston.set_value(false);
     //scoring all of those blocks
 
-    //clearing park zone
-    chassis.moveToPose(40,36,180,2000,{},false);
-    resetPositionBack();
+    //scoring lower 4
+    load();
+    chassis.moveToPoint(48, 48, 1000,{},false);
+    resetPositionFront();
     resetPositionLeft();
+    chassis.turnToHeading(223, 1000,{},false);
+    chassis.moveToPoint(26,26,1000,{.maxSpeed = 67},false);
+    chassis.moveToPoint(16,16,1000,{.maxSpeed=87},false);
+    reverse();
+    pros::delay(500);
+    //scoring lower 4
 
-    chassis.moveToPoint(40, 0,1000,{},false);
+    //clearing second parking zone
+    load();
+    chassis.moveToPoint(28,28,1000,{.forwards = false},false);
+    chassis.turnToHeading(180,1000,{},false);
+    chassis.moveToPoint(28,2,1000,{},false);
     chassis.turnToHeading(90,1000,{},false);
     resetPositionFront();
-    chassis.moveToPoint(46, 0, 1000,{},false);
-
-    chassis.tank(100,100);
-    pros::delay(1000);
+    chassis.moveToPoint(38,2,1000,{},false);
+    //starting the actual clearing
+    chassis.tank(97,97);
+    pros::delay(500);
     chassis.cancelAllMotions();
-    //clearing park zone
-    
+    pros::delay(300);
+    chassis.tank(97,97);
+    pros::delay(1000);
+    chassis.tank(-97,-97);
+    pros::delay(700);
+    chassis.cancelAllMotions();
+    pros::delay(200);
+    chassis.tank(50,50);
+    pros::delay(800);
+    resetPositionFront();
+    chassis.setPose(chassis.getPose().x,chassis.getPose().y,90);
+    //clearing second parking zone
 
+    //scoring seven on upper center goal
+    chassis.moveToPose(15,-15,45,2000,{.forwards=false},false);
+    chassis.turnToHeading(45+90, 1000,{},false);
+    middle_score();
+    pros::delay(2000);
+    load();
+    //scoring seven on upper center goal
+
+    //going to long and scoring excess
+    chassis.moveToPoint(48, -48, 2000,{.maxSpeed = 97},false);
+    pros::delay(500);
+    chassis.turnToHeading(90, 1000,{},false);
+    pros::delay(500);
+    resetPositionFront();
+    resetPositionRight();
+    chassis.moveToPoint(30,-48,500,{.forwards=false},false);
+    score();
+    pros::delay(500);
+    //going to long and scoring excess
+
+    //going to 3rd loader
+    scraper_piston.set_value(true);
+    chassis.moveToPoint(58.5, -48, 2000,{.maxSpeed = 67},false);
+    pros::delay(500);
+    resetPositionFront();
+    resetPositionRight();
+    //going to 3rd loader
+
+    //exiting loader
+    chassis.moveToPoint(48, chassis.getPose().y, 2000,{.forwards=false},false);
+    resetPositionRight();
+    resetPositionFront();
+    //exiting loader
+
+    //going to the side of second long goal
+    chassis.moveToPose(36, -58.5,140,2000,{},false);
+    chassis.turnToHeading(90, 1000,{},false);
+    scraper_piston.set_value(false);
+    resetPositionRight();
+    resetPositionFront();
+    //going to the side of second long goal
+
+    //traversing the side of the second long goal
+    chassis.moveToPoint(-36, chassis.getPose().y, 2000,{.forwards=false,.maxSpeed = 87},false);
+    resetPositionRight();
+    resetPositionBack();
+    //traversing the side of the second long goal
+
+    //aligning with the end of the second long goal
+    chassis.moveToPose(-36, -48, 45, 2000,{.lead = .4,.maxSpeed = 87},false);
+    chassis.turnToHeading(270, 2000,{},false);
+    //aligning with the end of the second long goal
+
+    //going to score on the second long goal
+    chassis.moveToPoint(-28.5,-48, 1000,{.forwards = false},false);
+    score();
+    pros::delay(1000);
+    resetPositionFront();
+    resetPositionLeft();
+    load();
+    //going to score on the second long goal
+
+    //going to 4th loader
+    scraper_piston.set_value(true);
+    chassis.moveToPoint(-58.5, chassis.getPose().y, 2000,{.maxSpeed = 87},false);
+    pros::delay(500);
+    resetPositionFront();
+    resetPositionLeft();
+    //going to 4th loader
+
+    //scoring all of those blocks
+    chassis.moveToPoint(-29.5, -48, 2000,{.forwards= false},false);
+    score();
+    pros::delay(1000);
+    resetPositionFront();
+    resetPositionLeft();
+    scraper_piston.set_value(false);
+    //scoring all of those blocks
+
+    //parking at the end
+    load();
+    chassis.moveToPose(-60,-24,0,2000,{},false);
+    resetPositionBack();
+    resetPositionLeft();
+    chassis.turnToHeading(325, 1000,{},false);
+    chassis.moveToPoint(-62.5, -22, 2000,{},false);
+    chassis.swingToHeading(0, DriveSide::RIGHT, 1000);
+    load();
+    chassis.tank(97,97);
+    pros::delay(1000);
+    //end skills
 }
 
+void center_4_3()
+{
+    chassis.setPose(47.563,-15,0);
+    resetPositionRight();
+    resetPositionBack();
+    load();
+
+    chassis.moveToPoint(chassis.getPose().x, -48, 1000,{.forwards = false},false);
+    chassis.turnToHeading(90, 1000);
+    resetPositionFront();
+    resetPositionRight();
+    scraper_piston.set_value(true);
+
+    chassis.moveToPoint(62, chassis.getPose().y, 1000,{},false);
+    pros::delay(800);
+    resetPositionFront();
+    resetPositionRight();
+
+    chassis.moveToPoint(32.034, -48, 1000,{.forwards=false},true);
+    chassis.waitUntil(20);
+    score();
+    scraper_piston.set_value(false);
+    chassis.waitUntilDone();
+    pros::delay(1000);
+
+    resetPositionFront();
+    resetPositionRight();
+
+    load();
+    chassis.moveToPoint(48,-48, 1000,{},false);
+    chassis.turnToHeading(314, 1000,{},false);
+
+    chassis.moveToPoint(22.545, -22.689, 1000,{},false);
+    chassis.turnToHeading(217.5, 2000,{},false);
+    chassis.moveToPoint(7.879, -42.818, 1000,{},false);
+    chassis.waitUntil(19);
+    scraper_piston.set_value(true);
+    chassis.waitUntilDone();
+
+    chassis.moveToPose(24, -24, 132.3, 1000,{.forwards = false},true);
+    chassis.moveToPoint(13.343,-14.062,1000,{.forwards=false},false);
+    score();
+    pros::delay(1500);
+
+    chassis.moveToPoint(36.635,-35.916, 1000,{},false);
+    chassis.turnToHeading(270, 1000,{},false);
+    resetPositionLeft();
+    resetPositionBack();
+
+    hook_piston.set_value(false);
+    chassis.moveToPoint(11.905, -35.916, 1000,{},false);
+}
 
 /**
  * Runs in driver control
@@ -409,6 +574,7 @@ void opcontrol() {
     // controller
     // loop to continuously update motors
 	autonomous();
+    //center_4_3();
     while (true) {
         // get joystick positions
         int leftY = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
@@ -433,6 +599,16 @@ void opcontrol() {
         else
         {
             intake.move(0);
+        }
+        if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN))
+        {
+            scraper_piston.toggle();
+            pros::delay(250); // debounce delay
+        }
+        if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_B))
+        {
+            hook_piston.toggle();
+            pros::delay(250); // debounce delay
         }
         // move the chassis with curvature drive
         chassis.arcade(leftY, rightX);
