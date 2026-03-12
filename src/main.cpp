@@ -566,11 +566,11 @@ void left_center_4_3()
     scraper_piston.set_value(true);
 
     chassis.moveToPoint(62, chassis.getPose().y, 1000,{},false);
-    pros::delay(800);
+    pros::delay(350);
     resetPositionFront();
     resetPositionRight();
 
-    chassis.moveToPoint(32.034+.1, -48, 1000,{.forwards=false},true);
+    chassis.moveToPoint(30, chassis.getPose().y, 1000,{.forwards=false},true);
     chassis.waitUntil(20);
     score();
     scraper_piston.set_value(false);
@@ -586,25 +586,25 @@ void left_center_4_3()
 
     chassis.moveToPoint(22.545, -22.689, 1000,{},false);
     chassis.turnToHeading(217.5, 2000,{},false);
-    chassis.moveToPoint(7.879, -42.818, 1000,{},false);
+    chassis.moveToPoint(5.879, -43.818, 1000,{},false);
     chassis.waitUntil(19);
     scraper_piston.set_value(true);
     chassis.waitUntilDone() ;
 
     chassis.moveToPoint(24, -24, 1000,{.forwards = false},true);
     chassis.turnToHeading(140, 1000,{},false);
-    chassis.moveToPoint(12.343,-12.062,1000,{.forwards=false},false);
+    chassis.moveToPoint(14.343,-13.062,1000,{.forwards=false},false);
     middle_score();
     pros::delay(1500);
 
     scraper_piston.set_value(false);
-    chassis.moveToPoint(36.635,-34.916, 1000,{},false);
+    chassis.moveToPoint(36.635,-35.916, 1000,{},false);
     chassis.turnToHeading(270, 1000,{},false);
     resetPositionLeft();
     resetPositionBack();
 
-    hook_piston.set_value(false);
-    chassis.moveToPoint(11.905, -35.916, 1000,{},false);
+    hook_piston.set_value(true);
+    chassis.moveToPoint(11.905, chassis.getPose().y, 1000,{},false);
 }
 
 void right_center_4_3()
@@ -668,37 +668,39 @@ void sig_sawp()
     resetPositionLeft();
     resetPositionBack();
 
+    //Push
     load();
     chassis.moveToPoint(chassis.getPose().x, chassis.getPose().y - 5, 500,{.minSpeed = 127},false);
     resetPositionLeft();
     resetPositionBack();
     pros::delay(100);
-
-    chassis.moveToPoint(48, 41.5, 1000,{.forwards=false,.maxSpeed = 87},false);
+    //Move to loader
+    chassis.moveToPoint(48, 41, 1000,{.forwards=false,.maxSpeed = 87},false);
     scraper_piston.set_value(true);
-
+    //Turn towards loader
     chassis.turnToHeading(90, 500,{},false);
     resetPositionFront();
     resetPositionLeft();
-
+    //Go into loader
     chassis.moveToPoint(65.25, 47, 1000,{},false);
     pros::delay(350);
     resetPositionFront();
     resetPositionLeft();
     scraper_piston.set_value(false);
 
-    chassis.moveToPoint(32.5, 47.35, 1000,{.forwards = false},false);
+    chassis.moveToPoint(31.5, 48.65, 1000,{.forwards = false},false);
     score();
-    pros::delay(1000);
+    pros::delay(850);
     resetPositionFront();
     resetPositionLeft();
 
-    /*load();
+    
     chassis.moveToPoint(48, 48, 1000,{},false);
     chassis.turnToHeading(90, 500,{},false);
     resetPositionFront();
     resetPositionLeft();
     chassis.turnToHeading(215, 500,{},false);
+    load();
 
     chassis.moveToPoint(26, 26, 1000,{},false);
 
@@ -707,38 +709,39 @@ void sig_sawp()
     chassis.moveToPoint(24,-24,850,{},false);
     chassis.setPose(24,-24,180);
     //resetPositionLeft();
-    chassis.turnToHeading(134.118, 500,{},false);
+    chassis.turnToHeading(147.118, 500,{},false);
 
     pros::lcd::print(4,"Chassis pose: %2f %2f", chassis.getPose().x, chassis.getPose().y);
-    chassis.moveToPoint(16.343,-18.062,1000,{.forwards = false,.maxSpeed = 87},false);
+    chassis.moveToPoint(16.343-.5,-18.062-.5,1000,{.forwards = false,.maxSpeed = 87},false);
     middle_score();
     pros::delay(750);
     scraper_piston.set_value(true);
-
+    
     load();
-    chassis.moveToPoint(48, -49, 1000,{},false);
+    chassis.moveToPoint(48, -51.5, 1000,{},false);
     chassis.turnToHeading(90, 350,{},false);
     resetPositionFront();
     resetPositionRight();
 
+    
     chassis.moveToPoint(61.5,chassis.getPose().y, 1000,{},false);
     pros::delay(350);
     resetPositionFront();
     resetPositionRight();
 
-    chassis.moveToPoint(36.034, chassis.getPose().y, 1000,{.forwards=false,.minSpeed = 67},false);
+    chassis.moveToPoint(37, chassis.getPose().y, 1000,{.forwards=false,.minSpeed = 67},false);
     score();
-    pros::delay(2000);*/
+    pros::delay(2000);
     
 }
 
 void autonomous()
 {
     //uncomment the one you want to run
-    skills();
+    //skills();
     //left_center_4_3();
     //right_center_4_3();
-    //sig_sawp();
+    sig_sawp();
 }
 
 /**
@@ -747,7 +750,7 @@ void autonomous()
 void opcontrol() {
     // controller
     // loop to continuously update motors
-	skills();
+	//skills();
     //left_center_4_3();
     //sig_sawp();
     //autonomous();
