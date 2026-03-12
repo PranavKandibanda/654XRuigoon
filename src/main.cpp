@@ -381,7 +381,7 @@ void skills() {
     //traversing the side of the first long goal
 
     //aligning with the end of the first long goal
-    chassis.moveToPose(36, 47, 311, 2000,{.forwards=false,.lead = .4,.maxSpeed = 87},false);
+    chassis.moveToPose(36, 48, 311, 2000,{.forwards=false,.lead = .4,.maxSpeed = 87},false);
     chassis.turnToHeading(90, 2000,{},false);
     //aligning with the end of the first long goal
 
