@@ -2,6 +2,7 @@
 #include "lemlib/api.hpp" // IWYU pragma: keep
 #include "lemlib/chassis/chassis.hpp"
 #include "lemlib/chassis/trackingWheel.hpp"
+#include "liblvgl/draw/lv_draw_rect.h"
 #include "pros/abstract_motor.hpp"
 #include "pros/adi.hpp"
 #include "pros/device.hpp"
@@ -16,9 +17,9 @@
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
 
 // motor groups
-pros::MotorGroup leftMotors({-2, -3, -4},
+pros::MotorGroup leftMotors({-2, -13, -4},
                             pros::MotorGearset::blue); // left motor group - ports 3 (reversed), 4, 5 (reversed)
-pros::MotorGroup rightMotors({7, 9, 8}, pros::MotorGearset::blue); // right motor group - ports 6, 7, 9 (reversed)
+pros::MotorGroup rightMotors({10, 9, 8}, pros::MotorGearset::blue); // right motor group - ports 6, 7, 9 (reversed)
 
 pros::adi::Pneumatics loading_piston('A',false);
 pros::adi::Pneumatics scoring_piston('B',false);
@@ -48,6 +49,13 @@ void score()
     intake.move(127);
 }
 
+void skills_score()
+{
+    loading_piston.set_value(true);
+    scoring_piston.set_value(false);
+    intake.move(117);
+}
+
 void reverse()
 {
     loading_piston.set_value(true);
@@ -55,6 +63,12 @@ void reverse()
     intake.move(-127);
 }
 
+void reverse_skills()
+{
+    loading_piston.set_value(true);
+    scoring_piston.set_value(false);
+    intake.move(-77);
+}
 
 
 // Inertial Sensor on port 10
@@ -68,7 +82,7 @@ double field_half_size = 72; // Half of the field size in inches
 
 pros::Distance front_sensor(6);
 pros::Distance right_sensor(20);
-pros::Distance left_sensor(16);
+pros::Distance left_sensor(17);
 pros::Distance back_sensor(11);
 
 
@@ -107,7 +121,7 @@ lemlib::ControllerSettings linearController(8, // proportional gain (kP)
 // angular motion controller
 lemlib::ControllerSettings angularController(1.7, // proportional gain (kP)
                                              0, // integral gain (kI)
-                                             14.5, // derivative gain (kD)
+                                             14.5, // derivative gjain (kD)
                                              3, // anti windup
                                              4, // small error range, in degrees
                                              100, // small error range timeout, in milliseconds
@@ -118,9 +132,9 @@ lemlib::ControllerSettings angularController(1.7, // proportional gain (kP)
 
 // sensors for odometry
 lemlib::OdomSensors sensors(nullptr, // vertical tracking wheel
-                            nullptr, // vertical tracking wheel 2, set to nullptr as we don't have a second one
+                            nullptr, // vertical tracking hwheel 2, set to nullptr as we don't have a second one
                             nullptr, // horizontal tracking wheel
-                            nullptr, // horizontal tracking wheel 2, set to nullptr as we don't have a second one
+                            nullptr, // horizontal trackbhhing wheel 2, set to nullptr as we don't have a second one
                             &imu // inertial sensor
 );
 
@@ -297,22 +311,27 @@ void competition_initialize() {}
  *
  * This is an example autonomous routine which demonstrates a lot of the features LemLib has to offer
  */
-void autonomous() {
+void skills() {
     chassis.setPose(-44.457,7,90);
     resetPositionBack();
+    hook_piston.set_value(false);
 
     //getting four balls in the center
     load();
     chassis.swingToHeading(45, DriveSide::LEFT, 500,{},false);
-    chassis.moveToPoint(-24, 24, 1000,{.maxSpeed=87}, false);
+    chassis.moveToPoint(-24, 24, 1000,{.maxSpeed=87}, true);
+    chassis.waitUntil(20);
+    scraper_piston.set_value(true);
+    chassis.waitUntilDone();
     //getting four balls in the center
 
     
     //scoring middle
     chassis.turnToHeading(315, 2000,{}, false);
-    chassis.moveToPoint(-12,12, 2000,{.forwards=false}, false);
-    middle_score();
-    pros::delay(500);
+    chassis.moveToPoint(-14.5,13.5, 2000,{.forwards=false}, false);
+    middle_score(); 
+    pros::delay(750);
+    load();
     //scoring middle
 
     //going to long and scoring excess
@@ -320,28 +339,35 @@ void autonomous() {
     chassis.turnToHeading(266, 1000,{}, false);
     resetPositionRight();
     resetPositionFront();
-    load();
     
-    chassis.moveToPoint(-30,48,500,{.forwards=false},false);
+    chassis.moveToPoint(-30,48,500,{.forwards=false,.maxSpeed = 87},false);
+    //scraper_piston.set_value(true);
     score();
-    pros::delay(500);
+    pros::delay(750);
+    load();
     //going to long and scoring excess
 
-    //going to 2nd loader
-    scraper_piston.set_value(true);
-    chassis.moveToPoint(-58.5, chassis.getPose().y, 2000,{.maxSpeed = 87},false);
-    pros::delay(500);
-    //going to 2nd loader
+    //going to 1st loader
+    chassis.moveToPoint(-50, chassis.getPose().y, 2000,{},false);
+    chassis.moveToPoint(-60.1, chassis.getPose().y, 2000,{.maxSpeed = 57},false);
+    chassis.tank(97,97);
+    pros::delay(1750);
+    chassis.cancelAllMotions();
+    
+    //going to 1st loader
 
 
     //exiting loader
-    chassis.moveToPoint(-48, chassis.getPose().y, 2000,{.forwards=false},false);
+    chassis.moveToPoint(-48, chassis.getPose().y, 2000,{.forwards=false},true);
+    chassis.waitUntil(5);
+    intake.move(0);
+    chassis.waitUntilDone();
     resetPositionRight();
     resetPositionFront();
     //exiting loader
 
     //going to the side of first long goal
-    chassis.moveToPose(-36, 58.5,46+180,2000,{.forwards=false},false);
+    chassis.moveToPose(-36, 59,46+180,2000,{.forwards=false},false);
     chassis.turnToHeading(270, 1000,{},false);
     scraper_piston.set_value(false);
     resetPositionRight();
@@ -355,82 +381,92 @@ void autonomous() {
     //traversing the side of the first long goal
 
     //aligning with the end of the first long goal
-    chassis.moveToPose(36, 48, 311, 2000,{.forwards=false,.lead = .4,.maxSpeed = 87},false);
+    chassis.moveToPose(36, 47, 311, 2000,{.forwards=false,.lead = .4,.maxSpeed = 87},false);
     chassis.turnToHeading(90, 2000,{},false);
     //aligning with the end of the first long goal
 
     //going to score on the first long goal
-    chassis.moveToPoint(27.5,48, 1000,{.forwards = false},false);
-    score();
-    pros::delay(1000);
+    chassis.moveToPoint(26.75,48, 1000,{.forwards = false},false);
+    scraper_piston.set_value(true);
+    skills_score();
+    pros::delay(2000);
     resetPositionFront();
     resetPositionLeft();
-    //going to score on the first long goal
+    load();
+    //going to score on the first long goal*/
 
+    //chassis.setPose(30,49.37,90);
+    //pros::lcd::print(4,"Chassis pose: %2f %2f", chassis.getPose().x, chassis.getPose().y);
+
+    
     //going to second loader
-    scraper_piston.set_value(true);
-    chassis.moveToPoint(58.5, 48, 2000,{.maxSpeed = 67},false);
-    pros::delay(500);
+    chassis.moveToPoint(49.75, chassis.getPose().y, 2000,{},false);
+    chassis.moveToPoint(60, chassis.getPose().y, 2000,{.maxSpeed = 73},false);
+    chassis.tank(97,97);
+    pros::delay(1500);
+    chassis.tank(0, 0);
+    intake.move(0);
     resetPositionLeft();
     resetPositionFront();
     //going to second loader
 
     //scoring all of those blocks
-    chassis.moveToPoint(30.5, 48, 2000,{.forwards= false},false);
-    score();
-    pros::delay(1000);
+    chassis.moveToPoint(31, chassis.getPose().y-1, 2000,{.forwards= false,.maxSpeed = 100},false);
+    scraper_piston.set_value(true);
+    skills_score();
+    pros::delay(1500);
     resetPositionFront();
     resetPositionLeft();
+    chassis.setPose(chassis.getPose().x,chassis.getPose().y,90);
     scraper_piston.set_value(false);
     //scoring all of those blocks
 
     //scoring lower 4
     load();
-    chassis.moveToPoint(48, 48, 1000,{},false);
-    resetPositionFront();
-    resetPositionLeft();
+    chassis.moveToPoint(48, 48, 1000,{.maxSpeed = 67},false);
     chassis.turnToHeading(223, 1000,{},false);
-    chassis.moveToPoint(26,26,1000,{.maxSpeed = 67},false);
-    chassis.moveToPoint(16,16,1000,{.maxSpeed=87},false);
-    reverse();
-    pros::delay(500);
+    //chassis.moveToPoint(26,24,1000,{.maxSpeed = 67},false);
+    //chassis.turnToHeading(223, 1000,{},false);
+    chassis.moveToPoint(19,18,1000,{.maxSpeed=77},false);
+    //pros::lcd::print(4,"Brett is code daddy x2");
+    reverse_skills();
+    pros::delay(2000);
     //scoring lower 4
 
     //clearing second parking zone
     load();
-    chassis.moveToPoint(28,28,1000,{.forwards = false},false);
-    chassis.turnToHeading(180,1000,{},false);
-    chassis.moveToPoint(28,2,1000,{},false);
-    chassis.turnToHeading(90,1000,{},false);
-    resetPositionFront();
-    chassis.moveToPoint(38,2,1000,{},false);
-    //starting the actual clearing
-    chassis.tank(97,97);
+    chassis.moveToPoint(24,24,1000,{.forwards = false},false);
+    chassis.turnToHeading(50,1000,{},false);
+    chassis.moveToPose(72, 24,180, 1000,{.lead = .4},false);
+    chassis.turnToHeading(180, 1000,{},false);
+
+    chassis.tank(87, 87);
     pros::delay(500);
-    chassis.cancelAllMotions();
+    scraper_piston.set_value(true);
     pros::delay(300);
-    chassis.tank(97,97);
-    pros::delay(1000);
-    chassis.tank(-97,-97);
-    pros::delay(700);
+    scraper_piston.set_value(false);
+    chassis.tank(97, 97);
+    pros::delay(2500);
     chassis.cancelAllMotions();
-    pros::delay(200);
-    chassis.tank(50,50);
-    pros::delay(800);
-    resetPositionFront();
-    chassis.setPose(chassis.getPose().x,chassis.getPose().y,90);
+
+    chassis.setPose(66, -36, 180);
+    resetPositionLeft();
+    chassis.moveToPoint(66, -36, 1000,{},false);
+    chassis.turnToHeading(90,1000,{},false);
+    resetPositionRight();
     //clearing second parking zone
 
+    
     //scoring seven on upper center goal
-    chassis.moveToPose(15,-15,45,2000,{.forwards=false},false);
-    chassis.turnToHeading(45+90, 1000,{},false);
+    chassis.moveToPose(48,-24,135,2000,{.forwards=false},false);
+    //chassis.turnToHeading(45+90, 1000,{},false);
     middle_score();
     pros::delay(2000);
     load();
     //scoring seven on upper center goal
 
     //going to long and scoring excess
-    chassis.moveToPoint(48, -48, 2000,{.maxSpeed = 97},false);
+    /*chassis.moveToPoint(48, -48, 2000,{.maxSpeed = 97},false);
     pros::delay(500);
     chassis.turnToHeading(90, 1000,{},false);
     pros::delay(500);
@@ -443,8 +479,8 @@ void autonomous() {
 
     //going to 3rd loader
     scraper_piston.set_value(true);
-    chassis.moveToPoint(58.5, -48, 2000,{.maxSpeed = 67},false);
-    pros::delay(500);
+    chassis.moveToPoint(60.25, -48, 2000,{.maxSpeed = 67},false);
+    pros::delay(1500);
     resetPositionFront();
     resetPositionRight();
     //going to 3rd loader
@@ -485,7 +521,7 @@ void autonomous() {
 
     //going to 4th loader
     scraper_piston.set_value(true);
-    chassis.moveToPoint(-58.5, chassis.getPose().y, 2000,{.maxSpeed = 87},false);
+    chassis.moveToPoint(-60.25, chassis.getPose().y, 2000,{.maxSpeed = 87},false);
     pros::delay(500);
     resetPositionFront();
     resetPositionLeft();
@@ -512,9 +548,11 @@ void autonomous() {
     chassis.tank(97,97);
     pros::delay(1000);
     //end skills
+    */
+    
 }
 
-void center_4_3()
+void left_center_4_3()
 {
     chassis.setPose(47.563,-15,0);
     resetPositionRight();
@@ -532,7 +570,7 @@ void center_4_3()
     resetPositionFront();
     resetPositionRight();
 
-    chassis.moveToPoint(32.034, -48, 1000,{.forwards=false},true);
+    chassis.moveToPoint(32.034+.1, -48, 1000,{.forwards=false},true);
     chassis.waitUntil(20);
     score();
     scraper_piston.set_value(false);
@@ -551,14 +589,16 @@ void center_4_3()
     chassis.moveToPoint(7.879, -42.818, 1000,{},false);
     chassis.waitUntil(19);
     scraper_piston.set_value(true);
-    chassis.waitUntilDone();
+    chassis.waitUntilDone() ;
 
-    chassis.moveToPose(24, -24, 132.3, 1000,{.forwards = false},true);
-    chassis.moveToPoint(13.343,-14.062,1000,{.forwards=false},false);
-    score();
+    chassis.moveToPoint(24, -24, 1000,{.forwards = false},true);
+    chassis.turnToHeading(140, 1000,{},false);
+    chassis.moveToPoint(12.343,-12.062,1000,{.forwards=false},false);
+    middle_score();
     pros::delay(1500);
 
-    chassis.moveToPoint(36.635,-35.916, 1000,{},false);
+    scraper_piston.set_value(false);
+    chassis.moveToPoint(36.635,-34.916, 1000,{},false);
     chassis.turnToHeading(270, 1000,{},false);
     resetPositionLeft();
     resetPositionBack();
@@ -567,14 +607,150 @@ void center_4_3()
     chassis.moveToPoint(11.905, -35.916, 1000,{},false);
 }
 
+void right_center_4_3()
+{
+    chassis.setPose(47.563,15,0);
+    resetPositionLeft();
+    resetPositionBack();
+    load();
+
+    chassis.moveToPoint(chassis.getPose().x, 48, 1000,{.forwards = false},false);
+    chassis.turnToHeading(90, 1000);
+    resetPositionFront();
+    resetPositionRight();
+    scraper_piston.set_value(true);
+
+    chassis.moveToPoint(62, chassis.getPose().y, 1000,{},false);
+    pros::delay(800);
+    resetPositionFront();
+    resetPositionRight();
+
+    chassis.moveToPoint(32.034, 48, 1000,{.forwards=false},true);
+    chassis.waitUntil(20);
+    score();
+    scraper_piston.set_value(false);
+    chassis.waitUntilDone();
+    pros::delay(1000);
+
+    resetPositionFront();
+    resetPositionRight();
+
+    load();
+    chassis.moveToPoint(48,48, 1000,{},false);
+    chassis.turnToHeading(225, 1000,{},false);
+
+    chassis.moveToPoint(22.545, 22.689, 1000,{},false);
+    chassis.turnToHeading(142.595, 2000,{},false);
+    chassis.moveToPoint(7.879, 42.818, 1000,{},false);
+    chassis.waitUntil(19);
+    scraper_piston.set_value(true);
+    chassis.waitUntilDone();
+
+    chassis.moveToPoint(24, -24, 1000,{.forwards = false},false);
+    chassis.turnToHeading(46.824, 1000,{},false);
+    chassis.moveToPoint(13.343,14.062,1000,{.forwards=false},false);
+    middle_score();
+    pros::delay(1500);
+
+    chassis.moveToPoint(36.635,35.916, 1000,{},false);
+    chassis.turnToHeading(270, 1000,{},false);
+    resetPositionLeft();
+    resetPositionBack();
+
+    hook_piston.set_value(false);
+    chassis.moveToPoint(11.905, 35.916, 1000,{},false);
+}
+
+void sig_sawp()
+{
+    chassis.setPose(47.563,0,180);
+
+    resetPositionLeft();
+    resetPositionBack();
+
+    load();
+    chassis.moveToPoint(chassis.getPose().x, chassis.getPose().y - 5, 500,{.minSpeed = 127},false);
+    resetPositionLeft();
+    resetPositionBack();
+    pros::delay(100);
+
+    chassis.moveToPoint(48, 41.5, 1000,{.forwards=false,.maxSpeed = 87},false);
+    scraper_piston.set_value(true);
+
+    chassis.turnToHeading(90, 500,{},false);
+    resetPositionFront();
+    resetPositionLeft();
+
+    chassis.moveToPoint(65.25, 47, 1000,{},false);
+    pros::delay(350);
+    resetPositionFront();
+    resetPositionLeft();
+    scraper_piston.set_value(false);
+
+    chassis.moveToPoint(32.5, 47.35, 1000,{.forwards = false},false);
+    score();
+    pros::delay(1000);
+    resetPositionFront();
+    resetPositionLeft();
+
+    /*load();
+    chassis.moveToPoint(48, 48, 1000,{},false);
+    chassis.turnToHeading(90, 500,{},false);
+    resetPositionFront();
+    resetPositionLeft();
+    chassis.turnToHeading(215, 500,{},false);
+
+    chassis.moveToPoint(26, 26, 1000,{},false);
+
+    chassis.turnToHeading(180, 500,{},false);
+
+    chassis.moveToPoint(24,-24,850,{},false);
+    chassis.setPose(24,-24,180);
+    //resetPositionLeft();
+    chassis.turnToHeading(134.118, 500,{},false);
+
+    pros::lcd::print(4,"Chassis pose: %2f %2f", chassis.getPose().x, chassis.getPose().y);
+    chassis.moveToPoint(16.343,-18.062,1000,{.forwards = false,.maxSpeed = 87},false);
+    middle_score();
+    pros::delay(750);
+    scraper_piston.set_value(true);
+
+    load();
+    chassis.moveToPoint(48, -49, 1000,{},false);
+    chassis.turnToHeading(90, 350,{},false);
+    resetPositionFront();
+    resetPositionRight();
+
+    chassis.moveToPoint(61.5,chassis.getPose().y, 1000,{},false);
+    pros::delay(350);
+    resetPositionFront();
+    resetPositionRight();
+
+    chassis.moveToPoint(36.034, chassis.getPose().y, 1000,{.forwards=false,.minSpeed = 67},false);
+    score();
+    pros::delay(2000);*/
+    
+}
+
+void autonomous()
+{
+    //uncomment the one you want to run
+    skills();
+    //left_center_4_3();
+    //right_center_4_3();
+    //sig_sawp();
+}
+
 /**
  * Runs in driver control
  */
 void opcontrol() {
     // controller
     // loop to continuously update motors
-	autonomous();
-    //center_4_3();
+	skills();
+    //left_center_4_3();
+    //sig_sawp();
+    //autonomous();
     while (true) {
         // get joystick positions
         int leftY = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
