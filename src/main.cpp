@@ -320,7 +320,7 @@ void skills() {
     load();
     chassis.swingToHeading(45, DriveSide::LEFT, 500,{},false);
     chassis.moveToPoint(-24, 24, 1000,{.maxSpeed=87}, true);
-    chassis.waitUntil(20);
+    chassis.waitUntil(17);
     scraper_piston.set_value(true);
     chassis.waitUntilDone();
     //getting four balls in the center
@@ -328,19 +328,19 @@ void skills() {
     
     //scoring middle
     chassis.turnToHeading(315, 2000,{}, false);
-    chassis.moveToPoint(-14.5,13.5, 2000,{.forwards=false}, false);
+    chassis.moveToPoint(-15.5,12.5, 2000,{.forwards=false}, false);//-16.5,13.5
     middle_score(); 
     pros::delay(750);
     load();
     //scoring middle
 
     //going to long and scoring excess
-    chassis.moveToPoint(-48, 48, 1000,{.maxSpeed = 97}, false);
+    chassis.moveToPoint(-48, 49, 1000,{.maxSpeed = 97}, false);
     chassis.turnToHeading(266, 1000,{}, false);
     resetPositionRight();
     resetPositionFront();
     
-    chassis.moveToPoint(-30,48,500,{.forwards=false,.maxSpeed = 87},false);
+    chassis.moveToPoint(-32.5,49,500,{.forwards=false,.maxSpeed = 87},false);
     //scraper_piston.set_value(true);
     score();
     pros::delay(750);
@@ -348,18 +348,16 @@ void skills() {
     //going to long and scoring excess
 
     //going to 1st loader
-    chassis.moveToPoint(-50, chassis.getPose().y, 2000,{},false);
-    chassis.moveToPoint(-60.1, chassis.getPose().y, 2000,{.maxSpeed = 57},false);
+    chassis.moveToPoint(-50, 49, 2000,{},false);
+    chassis.moveToPoint(-60.1, 49, 2000,{.maxSpeed = 57},false);
     chassis.tank(97,97);
     pros::delay(1750);
     chassis.cancelAllMotions();
-    
     //going to 1st loader
 
 
     //exiting loader
-    chassis.moveToPoint(-48, chassis.getPose().y, 2000,{.forwards=false},true);
-    chassis.waitUntil(5);
+    chassis.moveToPoint(-48, chassis.getPose().y, 2000,{.forwards=false},false);
     intake.move(0);
     chassis.waitUntilDone();
     resetPositionRight();
@@ -367,8 +365,8 @@ void skills() {
     //exiting loader
 
     //going to the side of first long goal
-    chassis.moveToPose(-36, 59,46+180,2000,{.forwards=false},false);
-    chassis.turnToHeading(270, 1000,{},false);
+    chassis.moveToPose(-36, 59,46+180,2000,{.forwards=false},false); 
+    chassis.turnToHeading(271, 1000,{},false);
     scraper_piston.set_value(false);
     resetPositionRight();
     resetPositionFront();
@@ -386,14 +384,14 @@ void skills() {
     //aligning with the end of the first long goal
 
     //going to score on the first long goal
-    chassis.moveToPoint(26.75,48, 1000,{.forwards = false},false);
+    chassis.moveToPoint(28,48, 1000,{.forwards = false},false);
     scraper_piston.set_value(true);
     skills_score();
     pros::delay(2000);
     resetPositionFront();
     resetPositionLeft();
     load();
-    //going to score on the first long goal*/
+    //going to score on the first long goal
 
     //chassis.setPose(30,49.37,90);
     //pros::lcd::print(4,"Chassis pose: %2f %2f", chassis.getPose().x, chassis.getPose().y);
@@ -411,7 +409,8 @@ void skills() {
     //going to second loader
 
     //scoring all of those blocks
-    chassis.moveToPoint(31, chassis.getPose().y-1, 2000,{.forwards= false,.maxSpeed = 100},false);
+    chassis.moveToPoint(32, chassis.getPose().y-1, 2000,{.forwards= false,.maxSpeed = 100},false);
+    chassis.turnToHeading(90, 1000,{},false);
     scraper_piston.set_value(true);
     skills_score();
     pros::delay(1500);
@@ -434,9 +433,10 @@ void skills() {
     //scoring lower 4
 
     //clearing second parking zone
-    load();
+    
     chassis.moveToPoint(24,24,1000,{.forwards = false},false);
     chassis.turnToHeading(50,1000,{},false);
+    load();
     chassis.moveToPose(72, 24,180, 1000,{.lead = .4},false);
     chassis.turnToHeading(180, 1000,{},false);
 
@@ -451,17 +451,19 @@ void skills() {
 
     chassis.setPose(66, -36, 180);
     resetPositionLeft();
-    chassis.moveToPoint(66, -36, 1000,{},false);
-    chassis.turnToHeading(90,1000,{},false);
+    chassis.moveToPoint(48, -36, 1000,{},false);
+    chassis.turnToHeading(90,1000,{.minSpeed = 67},false);
     resetPositionRight();
     //clearing second parking zone
 
     
     //scoring seven on upper center goal
-    chassis.moveToPose(48,-24,135,2000,{.forwards=false},false);
-    //chassis.turnToHeading(45+90, 1000,{},false);
+    chassis.moveToPose(24,-24,90,2000,{.forwards=false},false);
+    chassis.turnToHeading(135, 2000,{},false);
+    chassis.moveToPoint(12,-12, 2000,{.forwards=false},false);
     middle_score();
     pros::delay(2000);
+    //chassis.turnToHeading(45+90, 1000,{},false);
     load();
     //scoring seven on upper center goal
 
@@ -663,7 +665,7 @@ void right_center_4_3()
 
 void sig_sawp()
 {
-    chassis.setPose(47.563,0,180);
+    /*chassis.setPose(47.563,0,180);
 
     resetPositionLeft();
     resetPositionBack();
@@ -683,14 +685,15 @@ void sig_sawp()
     resetPositionLeft();
     //Go into loader
     chassis.moveToPoint(65.25, 47, 1000,{},false);
-    pros::delay(350);
+    pros::delay(300);
     resetPositionFront();
     resetPositionLeft();
     scraper_piston.set_value(false);
 
-    chassis.moveToPoint(31.5, 48.65, 1000,{.forwards = false},false);
+    chassis.moveToPoint(30, 48.65, 1000,{.forwards = false},false);
     score();
-    pros::delay(850);
+    pros::delay(850);*/
+    chassis.setPose(30, 48.65,90);
     resetPositionFront();
     resetPositionLeft();
 
@@ -712,7 +715,7 @@ void sig_sawp()
     chassis.turnToHeading(147.118, 500,{},false);
 
     pros::lcd::print(4,"Chassis pose: %2f %2f", chassis.getPose().x, chassis.getPose().y);
-    chassis.moveToPoint(16.343-.5,-18.062-.5,1000,{.forwards = false,.maxSpeed = 87},false);
+    chassis.moveToPoint(16.343-.5,-18.062-.5+-1,1000,{.forwards = false,.maxSpeed = 87},false);
     middle_score();
     pros::delay(750);
     scraper_piston.set_value(true);
@@ -724,12 +727,12 @@ void sig_sawp()
     resetPositionRight();
 
     
-    chassis.moveToPoint(61.5,chassis.getPose().y, 1000,{},false);
+    chassis.moveToPoint(62.5,chassis.getPose().y, 1000,{},false);
     pros::delay(350);
     resetPositionFront();
     resetPositionRight();
 
-    chassis.moveToPoint(37, chassis.getPose().y, 1000,{.forwards=false,.minSpeed = 67},false);
+    chassis.moveToPoint(37, chassis.getPose().y, 1000,{.forwards=false,.minSpeed = 67},false);//change y back to 48 if no work
     score();
     pros::delay(2000);
     
@@ -738,10 +741,10 @@ void sig_sawp()
 void autonomous()
 {
     //uncomment the one you want to run
-    //skills();
+    skills();
     //left_center_4_3();
     //right_center_4_3();
-    sig_sawp();
+    //sig_sawp();
 }
 
 /**
